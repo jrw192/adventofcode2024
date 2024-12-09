@@ -60,7 +60,6 @@ let ans1 = getTotalDistance(lists1[0], lists1[1]);
 console.log('ANSWER1:', ans1);
 /* -------------------------------------PART 2------------------------------------- */
 function init2() {
-    var _a;
     const input = fs.readFileSync('./input.txt', 'utf8');
     const lines = input.split('\n');
     const list = [];
@@ -69,16 +68,15 @@ function init2() {
     for (let line of lines) {
         let [a, b] = line.split('   ').map((n) => Number(n));
         list.push(a);
-        let old = (_a = map.get(b)) !== null && _a !== void 0 ? _a : 0;
+        let old = map.get(b) ?? 0;
         map.set(b, old + 1);
     }
     return { list, map };
 }
 function getSimilarityScore(list, map) {
-    var _a;
     let score = 0;
     for (let num of list) {
-        score += (num * ((_a = map.get(num)) !== null && _a !== void 0 ? _a : 0));
+        score += (num * (map.get(num) ?? 0));
     }
     return score;
 }

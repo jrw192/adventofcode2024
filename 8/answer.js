@@ -45,14 +45,13 @@ function init1() {
     return [map, lines.length, lines[0].length];
 }
 function buildCoordsFromMap(antennaMap) {
-    var _a;
     let coordMap = new Map();
     let tokenMap = new Map();
     for (let r = 0; r < antennaMap.length; r++) {
         for (let c = 0; c < antennaMap[0].length; c++) {
             let char = antennaMap[r][c];
             if (char !== '.') {
-                let coordList = (_a = coordMap.get(char)) !== null && _a !== void 0 ? _a : [];
+                let coordList = coordMap.get(char) ?? [];
                 coordList.push({ r, c });
                 coordMap.set(char, coordList);
             }

@@ -32,7 +32,6 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 /* -------------------------------------PART 1------------------------------------- */
@@ -78,7 +77,7 @@ for (let update of updates) {
     // for each number, check that the rest of the numbers after it don't contain any befores.
     for (let i = 0; i < update.length; i++) {
         let num = update[i];
-        let befores = (_a = rules.get(num)) !== null && _a !== void 0 ? _a : new Set();
+        let befores = rules.get(num) ?? new Set();
         let rest = update.slice(i + 1);
         for (let before of befores.values()) {
             if (rest.indexOf(before) > -1) {
@@ -100,12 +99,11 @@ let answer1 = middles.reduce((n, sum) => sum + n);
 console.log('PART 1:', answer1);
 /* -------------------------------------PART 2------------------------------------- */
 function sortFn(n1, n2) {
-    var _a, _b;
-    let n1befores = (_a = rules.get(n1)) !== null && _a !== void 0 ? _a : new Set();
+    let n1befores = rules.get(n1) ?? new Set();
     if (n1befores.has(n2)) {
         return 1;
     }
-    let n2befores = (_b = rules.get(n2)) !== null && _b !== void 0 ? _b : new Set();
+    let n2befores = rules.get(n2) ?? new Set();
     if (n2befores.has(n1)) {
         return -1;
     }

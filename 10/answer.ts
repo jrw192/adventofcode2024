@@ -25,21 +25,14 @@ function findTrailScore(map: number[][], start: number[]): number {
         for (let node of q) {
             let [row, col] = node;
             output[row][col] = 'X';
-            // console.log('---------------');
-            // for (let l of output) {
-            //     console.log(l.join(''));
-            // }
-            // console.log('---------------');
             if (map[row][col] == 9) {
                 score += 1;
             }
 
             let nextLocations = [[row + 1, col], [row - 1, col], [row, col - 1], [row, col + 1]];
             for (let location of nextLocations) {
-                // console.log('loc:', location, 'rows:', map.length, 'rows[0]', map[0].length);
                 // check if in bounds
                 if (location[0] >= 0 && location[1] >= 0 && location[0] < map.length && location[1] < map[0].length) {
-                    // console.log('visitng:', location);
                     let token = `${location[0]},${location[1]}`;
                     if (!visited.has(token)) {
                         if (map[location[0]][location[1]] == map[row][col] + 1) {
@@ -127,20 +120,13 @@ function isInBounds(map: number[][], location: number[]): boolean {
 
 function answer2() {
     let map = init2('./input.txt');
-    console.log('--------------');
-    for (let l of map) {
-        console.log(l.join(''))
-    }
-    console.log('--------------');
     let trailheads = getAllTrailheads(map);
-    console.log('trailheads', trailheads);
-    let score: number[] = [];
+    let score = 0;
     for (let head of trailheads) {
         let currentScore = findTrailScore2(map, head, new Set<string>());
-        score.push(currentScore);
+        score += currentScore;
     }
-    console.log('score', score);
-    console.log('ANSWER 2:', score.reduce((n, sum) => n + sum));
+    console.log('ANSWER 2:', score);
 }
 
 answer2();

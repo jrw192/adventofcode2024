@@ -102,7 +102,6 @@ function formatInput2() {
     const input = fs.readFileSync('./test.txt', 'utf8');
     const data = input.split('');
     let formatted = [];
-    let openSpaces = new Map();
     let id = 0;
     for (let i = 0; i < data.length; i++) {
         let num = Number(data[i]);
@@ -112,7 +111,6 @@ function formatInput2() {
             for (let n = 0; n < num; n++) {
                 formatted.push('.');
             }
-            openSpaces.set(start, num);
         }
         else {
             // data block indicator
@@ -124,20 +122,81 @@ function formatInput2() {
     }
     // console.log(formatted.join(''));
     // console.log(openSpaces);
-    return { formatted, openSpaces };
+    return formatted;
 }
-function squish2(data, openSpaces) {
+function getFreeSpaces(data) {
+    // key: start index, value: num spaces
+    let spaces = new Map();
+    let startIndex = 0;
+    let numSpaces = 0;
+    for (let i = 0; i < data.length; i++) {
+        let c = data[i];
+        if (c !== '.') {
+            if (numSpaces > 0) {
+                startIndex = i - numSpaces;
+                spaces.set(startIndex, numSpaces);
+            }
+            numSpaces = 0;
+        }
+        else if (c == '.') {
+            numSpaces += 1;
+        }
+    }
+    return spaces;
+}
+function squish2(data) {
     console.log('before:', data.join(''));
     let output = JSON.parse(JSON.stringify(data));
     let index = data.length - 1;
-    for (let [space, size] of openSpaces) {
-        console.log('space:', space, 'size:', size);
-        let { block, indexes } = buildBlockOfMaxSize(output.slice(0, index + 1), size);
+    let openSpaces = getFreeSpaces(output);
+    while (index >= 0) {
+        // console.log('space:', space, 'size:', size);
+        let openSpace = Math.min(...Array.from(openSpaces.keys()));
+        let openSize = openSpaces.get(openSpace) ?? 0;
+        console.log('starting index:', index);
+        let block = getNextBlock(output.slice(0, index + 1));
+        let filteredBlock = block.filter((c) => c !== '.');
+        while ((filteredBlock.length == 0 || filteredBlock.length > openSize)) {
+            if (index < 0) {
+                return output;
+            }
+            index -= (block.length);
+            block = getNextBlock(output.slice(0, index + 1));
+            filteredBlock = block.filter((c) => c !== '.');
+        }
         console.log('block', block);
-        index -= 1;
+        console.log('filteredBlock', filteredBlock);
+        // clear the block space
+        for (let i = openSpace; i < openSpace + openSize; i++) {
+            let diff = openSpace - i + 1;
+            output[index - diff] = 'X';
+        }
+        // move the block
+        for (let i = openSpace; i < openSpace + openSize; i++) {
+            output[i] = block[0];
+        }
+        index -= (block.length);
+        openSpaces = getFreeSpaces(output);
     }
-    console.log(output.join(''));
     return output;
+}
+// for (let [space, size] of openSpaces) {
+//     console.log('space:', space, 'size:', size);
+//     let {block, indexes} = buildBlockOfMaxSize(output.slice(0, index+1), size);
+//     console.log('block',block);
+//     openSpaces = getFreeSpaces(output);
+//     index -= 1;
+// }
+function getNextBlock(data) {
+    let block = [];
+    let i = data.length - 1;
+    block.push(data[i]);
+    i -= 1;
+    while (i >= 0 && data[i] == block[0]) {
+        block.push(data[i]);
+        i -= 1;
+    }
+    return block;
 }
 function buildBlockOfMaxSize(data, maxSize) {
     let block = [];
@@ -165,24 +224,10 @@ function buildBlockOfMaxSize(data, maxSize) {
     }
     return { block, indexes };
 }
-// function getBlockAndStartIndex(data: string[]): { block: string[], startIndex: number } {
-//     let i = data.length - 1;
-//     while (data[i] == '.') {
-//         i -= 1;
-//     }
-//     let block = [data[i]];
-//     // console.log('data[i]',data[i],'block[0]',block[0]);
-//     i -= 1;
-//     while (data[i] == block[0]) {
-//         // console.log('data[i]',data[i],'block[0]',block[0]);
-//         block.push(data[i]);
-//         i -= 1;
-//     }
-//     return { block, startIndex: i + 1 };
-// }
 function answer2() {
-    let { formatted, openSpaces } = formatInput2();
-    let output = squish2(formatted, openSpaces);
+    let formatted = formatInput2();
+    let output = squish2(formatted);
+    console.log(output.join(''));
     let checkSum = getCheckSum(output);
     console.log('ANSWER2', checkSum);
 }

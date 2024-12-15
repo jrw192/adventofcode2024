@@ -103,12 +103,7 @@ function getProduct(lines) {
 }
 function answer2() {
     let lines = init2();
-    for (let line of lines) {
-        console.log(line);
-        console.log('---------------------------------------------------');
-    }
     let ans = getProduct(lines);
     console.log('ANS2:', ans);
-    // 66370230 too low
 }
 answer2();

@@ -101,14 +101,14 @@ function answer1() {
 // P: set of computers/nodes that can be added to R (by default, all computers)
 // X: set of computers/nodes that has been processed
 // cliques: stores the maximal clique
-function bronKerbosch(cMap, R, P, X, cliques) {
+function bronKerbosch(cMap, R, P, cliques) {
     // console.log('--------------------------bronKerbosch--------------------------');
     // console.log('R:', R);
     // console.log('P:', P);
     // console.log('X:',X);
     // if P and X are both empty then report R as a maximal clique
     // no more computers to process
-    if (P.size == 0 && X.size == 0) {
+    if (P.size == 0) {
         cliques.add(Array.from(R));
         return cliques;
     }
@@ -122,13 +122,10 @@ function bronKerbosch(cMap, R, P, X, cliques) {
         // console.log('newNeighbors',newNeighbors);
         // newP = P ⋂ N(v)
         let newP = P.intersection(newNeighbors);
-        // newX =  X ⋂ N(v)
-        let newX = X.intersection(newNeighbors);
-        bronKerbosch(cMap, newR, newP, newX, cliques);
+        bronKerbosch(cMap, newR, newP, cliques);
         // P := P \ {v}
         // X := X ⋃ {v}
         P.delete(v);
-        X.add(v);
     }
     return cliques;
 }
@@ -156,7 +153,7 @@ function answer2() {
     }
     // console.log(P);
     // connections, R, P, X, cliques
-    let cliques = bronKerbosch(cMap, new Set(), P, new Set(), new Set());
+    let cliques = bronKerbosch(cMap, new Set(), P, new Set());
     let maximalClique = null;
     let maxSize = -1;
     Array.from(cliques).map(c => {

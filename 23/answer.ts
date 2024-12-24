@@ -78,43 +78,32 @@ function answer1() {
 /* -------------------------------------PART 2------------------------------------- */
 // R: set of computers/nodes in the current clique
 // P: set of computers/nodes that can be added to R (by default, all computers)
-// X: set of computers/nodes that has been processed
 // cliques: stores the maximal clique
-function bronKerbosch(cMap: Map<string, Set<string>>, R: Set<string>, P: Set<string>, X: Set<string>, cliques: Set<string[]>) {
-    // console.log('--------------------------bronKerbosch--------------------------');
-    // console.log('R:', R);
-    // console.log('P:', P);
-    // console.log('X:',X);
-    // if P and X are both empty then report R as a maximal clique
+function bronKerbosch(cMap: Map<string, Set<string>>, R: Set<string>, P: Set<string>, cliques: Set<string[]>) {
+    // if P empty then report R as a maximal clique
     // no more computers to process
-    if (P.size == 0 && X.size == 0) {
+    if (P.size == 0) {
         cliques.add(Array.from(R));
         return cliques;
     }
 
     // for each vertex v in P do
     for (let v of P) {
-        // console.log('v:',v);
         // BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
 
         // newR = R ⋃ {v}
         let newR = R.union(new Set([v]));
         
         let newNeighbors = cMap.get(v) ?? new Set<string>();
-        // console.log('newNeighbors',newNeighbors);
 
         // newP = P ⋂ N(v)
         let newP = P.intersection(newNeighbors);
 
-        // newX =  X ⋂ N(v)
-        let newX = X.intersection(newNeighbors);
 
-        bronKerbosch(cMap, newR, newP, newX, cliques);
+        bronKerbosch(cMap, newR, newP, cliques);
 
         // P := P \ {v}
-        // X := X ⋃ {v}
         P.delete(v);
-        X.add(v);
     }
 
     return cliques;
@@ -148,7 +137,7 @@ function answer2() {
     }
     // console.log(P);
     // connections, R, P, X, cliques
-    let cliques = bronKerbosch(cMap, new Set<string>(), P, new Set<string>(), new Set<string[]>());
+    let cliques = bronKerbosch(cMap, new Set<string>(), P, new Set<string[]>());
     let maximalClique = null;
     let maxSize = -1;
     Array.from(cliques).map(c => {

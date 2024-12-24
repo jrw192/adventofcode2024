@@ -82,7 +82,7 @@ function getAllNodes(maze) {
     return nodes;
 }
 function answer1() {
-    let { maze, start, end } = init1('./input.txt');
+    let { maze, start, end } = init1('./test.txt');
     let nodes = getAllNodes(maze);
     // console.log('-------------');
     // for (let [t,n] of nodes) {
@@ -93,6 +93,8 @@ function answer1() {
     visited.add(`${start.r},${start.c}`);
     dijkstra(nodes, start, end);
     // console.log('ANS1:',minScore);
+}
+function sortDistances(dists) {
 }
 function dijkstra(graph, start, end) {
     let q = [];

@@ -99,14 +99,9 @@ function answer1() {
 /* -------------------------------------PART 2------------------------------------- */
 // R: set of computers/nodes in the current clique
 // P: set of computers/nodes that can be added to R (by default, all computers)
-// X: set of computers/nodes that has been processed
 // cliques: stores the maximal clique
 function bronKerbosch(cMap, R, P, cliques) {
-    // console.log('--------------------------bronKerbosch--------------------------');
-    // console.log('R:', R);
-    // console.log('P:', P);
-    // console.log('X:',X);
-    // if P and X are both empty then report R as a maximal clique
+    // if P empty then report R as a maximal clique
     // no more computers to process
     if (P.size == 0) {
         cliques.add(Array.from(R));
@@ -114,17 +109,14 @@ function bronKerbosch(cMap, R, P, cliques) {
     }
     // for each vertex v in P do
     for (let v of P) {
-        // console.log('v:',v);
         // BronKerbosch2(R ⋃ {v}, P ⋂ N(v), X ⋂ N(v))
         // newR = R ⋃ {v}
         let newR = R.union(new Set([v]));
         let newNeighbors = cMap.get(v) ?? new Set();
-        // console.log('newNeighbors',newNeighbors);
         // newP = P ⋂ N(v)
         let newP = P.intersection(newNeighbors);
         bronKerbosch(cMap, newR, newP, cliques);
         // P := P \ {v}
-        // X := X ⋃ {v}
         P.delete(v);
     }
     return cliques;
